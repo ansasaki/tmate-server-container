@@ -19,7 +19,7 @@ $ podman run --name tmate-server \
     -v $(pwd)/keys:/root/keys:z \
     --cap-add CAP_SYS_ADMIN \
     -p 2222:2222 -P \
-    ghcr.io/ansasaki/tmate-server-container \
+    ghcr.io/ansasaki/tmate-server-container/tmate-server:main \
     -k /root/keys -p 2222 -h $(hostname)
 ```
 
