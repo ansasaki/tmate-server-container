@@ -7,6 +7,7 @@ FROM registry.fedoraproject.org/fedora-minimal AS builder
 RUN microdnf install -y \
     autoconf \
     automake \
+    curl \
     gcc \
     git \
     libevent-devel \
@@ -19,7 +20,8 @@ RUN microdnf install -y \
 RUN git clone https://github.com/tmate-io/tmate-ssh-server.git && cd tmate-ssh-server && \
     ./create_keys.sh && \
     ./autogen.sh && \
-    ./configure && make
+    ./configure && \
+    make
 
 # Build server image using a fedora minimal base image
 FROM registry.fedoraproject.org/fedora-minimal
@@ -39,14 +41,21 @@ LABEL license="MIT"
 LABEL vendor="Anderson Toshiyuki Sasaki"
 
 RUN microdnf makecache && \
-    microdnf -y install libssh libevent msgpack ncurses glibc-langpack-en && \
+    microdnf -y install \
+    libssh libevent msgpack ncurses glibc-langpack-en openssh hostname && \
     microdnf clean all && \
     rm -rf /var/cache/dnf/*
 
 # Copy server from the builder
 COPY --from=builder /tmate-ssh-server/tmate-ssh-server /bin/tmate-ssh-server
+COPY --from=builder /tmate-ssh-server/create_keys.sh /bin/create_keys
+COPY print_tmate_conf.sh /bin/print_tmate_conf
+COPY start_server.sh /bin/start_server
 
-ENTRYPOINT ["/bin/tmate-ssh-server"]
+ENTRYPOINT ["start_server"]
 
 ENV SSH_PORT_LISTEN=2222
+ENV SSH_HOSTNAME="localhost"
+ENV SSH_KEY_DIR="/keys"
+
 EXPOSE 2222
