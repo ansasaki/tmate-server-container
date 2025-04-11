@@ -7,7 +7,7 @@ A container to run a tmate server
 # Usage
 ```
 podman run --name tmate-server \
-    --rm -d \
+    --rm -t \
     -v $(pwd)/keys:/root/keys:z \
     --cap-add CAP_SYS_ADMIN \
     -p 2222:2222 -P \
