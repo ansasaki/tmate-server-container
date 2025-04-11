@@ -12,7 +12,7 @@ podman run --name tmate-server \
     --cap-add CAP_SYS_ADMIN \
     -p 2222:2222 -P \
     -e SSH_PORT_LISTEN=2222 \
-    -e SSH_HOSTNAME=$(hostname)
+    -e SSH_HOSTNAME=$(hostname) \
     ghcr.io/ansasaki/tmate-server-container/tmate-server:main
 ```
 
